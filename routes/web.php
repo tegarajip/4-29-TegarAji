@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\ContactController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,37 +14,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('/contacts',ContactController::class);
-
-Auth::routes();
-
-Route::group(['middleware' => ['auth']],function(){
-    Route::get('/home',[App\Http\Controllers::class,'index'])->name('home');
-});
-
 Route::get('/', function () {
-    return view('index',[
-        "title" => "home"
-    ]);
+    return view('welcome');
 });
-Route::get('/about', function () {
-    return view('index',[
-        "title" => "about"
-    ]);
-});
-Route::get('/galeri', function () {
-    return view('galeri',[
-        "title" => "galeri"
-    ]);
-});
-Route::resource('/contacts', ContactController::class); 
 
-//{    
-//     return view('contacts',[
-//         "title" => "contact"
-//     ]);
-// });
+Route::get('/', function(){
+    return view ('index', [
+        "title" => "Beranda"
+    ]);
 
+});
+
+
+Route::get('/gallery', function(){
+    return view ('gallery', [
+        "title" => "Gallery"
+    ]);
+});
+Route::get('/about', function(){
+    return view('about', [
+        "title" => "About",
+        "nama" => "Tegar Aji Pangestu",
+        "email" => "3103120219@student.smktelkom-pwt.sch.id",
+        "gambar" => "cr7.jpg"
+    ]);
+});
+
+Route::get('/contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+Route::post('/contacts/store', [ContactController::class, 'store'])->name('contacts.store');
+//Route::resource('/contacts', ContactController::class);
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => ['auth']], function(){
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/contacts/index', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('/contacts/{id}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
+    Route::post('/contacts/{id}/update', [ContactController::class, 'update'])->name('contacts.update');
+    Route::get('/contacts/{id}/destroy', [ContactController::class, 'destroy'])->name('contacts.destroy');
+});
